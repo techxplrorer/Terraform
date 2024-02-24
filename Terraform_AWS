@@ -1,0 +1,17 @@
+STEPS
+
+1. Create Access Keys from AWS Console
+
+2. Make Sure aws "USER" have appropriate Roles/Permissions to access the resource
+
+3. Create Access Key IAM >> USER --> Security Credentials --> Creat Access Keys 
+
+3. Configure "AWS Configure" in your local terminal  ( Inputs Access keys, Passwords , & so on)
+
+4. Move into work directory ( Type code . )
+
+5. 
+
+ 
+
+
