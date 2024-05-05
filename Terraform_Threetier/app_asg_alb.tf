@@ -13,12 +13,12 @@ resource "aws_launch_configuration" "three-tier-app-lconfig" {
   name_prefix                 = "three-tier-app-lconfig"
   image_id                    = "ami-06aa3f7caf3a30282"
   instance_type               = "t2.micro"
-  #key_name                    = "three-tier-app-asg-kp"
+  key_name                    = "three-tier-app-asg-kp"
   security_groups             = [aws_security_group.three-tier-ec2-asg-sg-app.id]
   user_data                   = <<-EOF
                                 #!/bin/bash
-
-                                sudo yum install mysql -y
+                                sudo apt update -y
+                                sudo apt install -y mysql-server
 
                                 EOF
                                 

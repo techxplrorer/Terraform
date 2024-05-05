@@ -7,20 +7,19 @@ resource "aws_security_group" "three-tier-alb-sg-web" {
     aws_vpc.myVPC
   ]
 
-
   ingress {
     from_port   = "0"
     to_port     = "0"
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   egress {
     from_port   = "0"
     to_port     = "0"
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
 
   tags = {
     Name = "three-tier-alb-sg-web"
@@ -85,16 +84,27 @@ resource "aws_security_group" "three-tier-alb-sg-app" {
   ]
 
   ingress {
+    from_port          = "22"
+    to_port            = "22"
+    protocol           = "tcp"
+    #security_groups    = [aws_security_group.three-tier-ec2-asg-sg-web.id]
+    security_groups  = [aws_security_group.three-tier-alb-sg-web.id]
+  }
+
+  ingress {
     from_port          = "80"
     to_port            = "80"
     protocol           = "tcp"
-    security_groups    = [aws_security_group.three-tier-ec2-asg-sg-web.id]
+    #security_groups    = [aws_security_group.three-tier-ec2-asg-sg-web.id]
+    security_groups  = [aws_security_group.three-tier-alb-sg-web.id]
   }
+
   ingress {
     from_port          = "443"
     to_port            = "443"
     protocol           = "tcp"
-    security_groups    = [aws_security_group.three-tier-ec2-asg-sg-web.id]
+    #security_groups    = [aws_security_group.three-tier-ec2-asg-sg-web.id]
+    security_groups  = [aws_security_group.three-tier-alb-sg-web.id]
   }  
 
   tags = {
@@ -102,7 +112,7 @@ resource "aws_security_group" "three-tier-alb-sg-app" {
   }
 }
 
-# app tier auto scalling group - Security Group
+# app tier auto scaling group - Security Group
 resource "aws_security_group" "three-tier-ec2-asg-sg-app" {
   name        = "three-tier-ec2-asg-sg-app"
   description = "Allow traffic from web tier"
@@ -115,19 +125,22 @@ resource "aws_security_group" "three-tier-ec2-asg-sg-app" {
     from_port = "-1"
     to_port   = "-1"
     protocol  = "icmp"
-    security_groups  = [aws_security_group.three-tier-alb-sg-app.id]
+    #security_groups  = [aws_security_group.three-tier-alb-sg-app.id]
+    security_groups    = [aws_security_group.three-tier-ec2-asg-sg-web.id]
   }
   ingress {
     from_port   = "80"
     to_port     = "80"
     protocol    = "tcp"
-    security_groups  = [aws_security_group.three-tier-alb-sg-app.id]
+    #security_groups  = [aws_security_group.three-tier-alb-sg-app.id]
+    security_groups    = [aws_security_group.three-tier-ec2-asg-sg-web.id]
   }
   ingress {
     from_port   = "22"
     to_port     = "22"
     protocol    = "tcp"
-    security_groups  = [aws_security_group.three-tier-alb-sg-app.id]
+    #security_groups  = [aws_security_group.three-tier-alb-sg-app.id]
+    security_groups    = [aws_security_group.three-tier-ec2-asg-sg-web.id]
   }
   egress {
     from_port   = "0"
@@ -162,9 +175,10 @@ resource "aws_security_group" "three-tier-db-sg" {
     from_port        = 3306
     to_port          = 3306
     protocol         = "tcp"
-    cidr_blocks      = ["10.0.0.32/28" , "10.0.0.48/28"]
+    cidr_blocks      = ["10.0.3.0/24" , "10.0.4.0/24"]  #security group not working so CIDR
     description      = "Access for the web ALB SG"
-    security_groups = [aws_security_group.three-tier-ec2-asg-sg-web.id]
+    #security_groups = [aws_security_group.three-tier-alb-sg-app.id]
+    #security_groups = [aws_security_group.three-tier-ec2-asg-sg-web.id]
   }
 
 
@@ -172,7 +186,8 @@ resource "aws_security_group" "three-tier-db-sg" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [aws_security_group.three-tier-ec2-asg-sg-app.id]
+    #security_groups = [aws_security_group.three-tier-alb-sg-app.id]
+    #security_groups = [aws_security_group.three-tier-ec2-asg-sg-app.id]
     cidr_blocks     = ["10.0.0.0/16"]
   }
 

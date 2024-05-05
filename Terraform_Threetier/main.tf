@@ -5,7 +5,7 @@ resource "aws_vpc" "myVPC" {
   tags = {
     Name = "VPC_Demo"
   }
-}
+}   
 
 # Create Public Subnet within VPC for Web Tier with Multi Azs
 resource "aws_subnet" "pubsub" {

@@ -17,9 +17,14 @@ resource "aws_launch_configuration" "three-tier-web-lconfig" {
   name_prefix                 = "three-tier-web-lconfig"
   image_id                    = "ami-06aa3f7caf3a30282"
   instance_type               = "t2.micro"
-  #key_name                    = "three-tier-web-asg-kp"
+  key_name                    = "three-tier-web-asg-kp"
   security_groups             = [aws_security_group.three-tier-ec2-asg-sg-web.id]
   #user_data                   = base64encode(file("userdata.sh"))
+  user_data                   = <<-EOF
+                                #!/bin/bash
+                                sudo apt update -y
+                                sudo apt install -y apache2
+                                EOF
   associate_public_ip_address = true
   lifecycle {
     #prevent_destroy = true
